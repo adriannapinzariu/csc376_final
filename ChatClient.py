@@ -3,6 +3,7 @@ global socket_closed
 global user_input
 global functionality_d
 
+#yes i did
 socket_closed = False
 user_input = ""
 functionality_d = { "message": "m", "file": "f", "exit": "x" }
