@@ -117,11 +117,55 @@ def receive_helper(sock, f_port):
 	global user_input
 	global functionality_d
 
+	#print("before the while oop")
 	while True:
-		bytes = sock.recv(1024).decode()
+		#print("in the while loop, before raw bytes")
+
+		raw_bytes = sock.recv(1024)
+		#bytes = sock.recv(1024).decode()
+		#print("before the if")
 		if not bytes:
+			#print("welp it broke")
 			break
 
+		#print("yay")
+		#print(f"[DEBUG] Raw bytes: {raw_bytes}")
+		#decoded = raw_bytes.decode(errors='replace')
+		#print(f"[DEBUG] Raw message received: {repr(decoded)}")
+
+		if bytes[0] in functionality_d.values():
+			tag = bytes[0] 
+			data = bytes[1:]
+		
+			if tag == functionality_d["message"]:
+				#message main
+				print(data)
+
+			elif tag == functionality_d["file"]:
+				#file main
+				sock_file = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+				sock_file.connect(("localhost", f_port)) 
+
+				# check whether the file exists; if it does, send back the file size
+				try:
+					file_stat= os.stat( data ) 
+					if file_stat.st_size:
+						file= open( data, 'rb' )
+						send_file( sock_file, file_stat.st_size, file )
+					else:
+						no_file( sock_file )
+				except OSError:
+					no_file( sock_file )
+
+				sock_file.close()
+
+			else:
+				#this shouldn't happen
+				print("Debug: This shouldn't be here.")
+		else:
+			print(bytes)
+
+'''
 		tag = bytes[0] 
 		data = bytes[1:]
 		
@@ -150,6 +194,7 @@ def receive_helper(sock, f_port):
 		else:
 			#this shouldn't happen
 			print("Debug: This shouldn't be here.")
+		'''
 
 def client(port, address, connect_server_port): 
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
@@ -212,10 +257,18 @@ def ui(sock, port, side):
 		user_input = user_input.lower()
 
 		if user_input == functionality_d["message"]: #message
-			message = user_input
+			#message = user_input
 			print("Enter your message:") 
-			message += sys.stdin.readline().rstrip( '\n' ) 
+			usr_msg = sys.stdin.readline().rstrip( '\n' ) 
+
+			#NEW CODE
+			username = os.path.basename(os.getcwd())
+			message = f"{functionality_d['message']}{username}: {usr_msg}"
+			#NEW CODE
+
 			sock.send(message.encode())
+
+			
 
 		elif user_input == functionality_d["file"]: #file
 			filename = user_input 
