@@ -154,6 +154,7 @@ def receive_helper(sock, f_port):
 def client(port, address, connect_server_port): 
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
 	sock.connect((address, connect_server_port)) 
+	
 	mr_thready(sock)
 
 	try:

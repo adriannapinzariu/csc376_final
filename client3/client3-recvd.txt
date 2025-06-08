@@ -34,3 +34,4 @@ Enter an option ('m', 'f', 'x'):
 	(M)essage (send)
 	(F)ile (request)
 e(X)it
+closing your sockets...goodbye
