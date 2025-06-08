@@ -166,6 +166,28 @@ def client(port, address, connect_server_port):
 	wait_for_it(.5)
 	ui(sock, port, "client") 
 
+def server(port): # // reference echoServer.py
+	serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+	serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) #restart
+	serversocket.bind(('', port)) # binds to any available interface
+	serversocket.listen(5) # accept any connection requests (client, address aka localhost)
+	sock, addr = serversocket.accept() # we have client, server no longer needed
+	serversocket.close() 
+
+	mr_thready(sock)
+	wait_for_it(.5)
+
+	while True:
+		try:
+			send_port = f"{port}\n"
+			sock.send(send_port.encode())
+		except:
+			sock.shutdown
+			sock.close()
+			return	
+	
+	ui(sock, port, "server") 
+
 def ui(sock, port, side): 
 	
 	global user_input
