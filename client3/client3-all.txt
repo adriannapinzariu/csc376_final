@@ -1,0 +1,11 @@
+client3
+m
+hello from client3
+m
+Looking forward to chat
+f
+client1
+Ameca_splendens.jpg
+m
+Nice to meet you!
+x

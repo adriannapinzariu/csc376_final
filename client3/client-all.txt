@@ -1,0 +1,9 @@
+m
+Hello, server
+m
+How are you?
+f
+Ameca_splendens.jpg
+m
+got it!
+x

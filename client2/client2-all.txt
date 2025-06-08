@@ -1,0 +1,11 @@
+client2
+m
+hello from client2
+m
+truly
+f
+client1
+Ameca_splendens.jpg
+m
+working well
+x

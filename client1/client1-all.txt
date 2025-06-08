@@ -1,0 +1,11 @@
+client1
+m
+hello from client1
+m
+nice day to chat
+f
+client2
+one-liners.txt
+m
+gotcha
+x
