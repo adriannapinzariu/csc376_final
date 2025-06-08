@@ -121,17 +121,13 @@ def receive_helper(sock, f_port):
 	while True:
 		#print("in the while loop, before raw bytes")
 
-		raw_bytes = sock.recv(1024)
-		#bytes = sock.recv(1024).decode()
-		#print("before the if")
+
+		bytes = sock.recv(1024).decode()
+
 		if not bytes:
 			#print("welp it broke")
 			break
 
-		#print("yay")
-		#print(f"[DEBUG] Raw bytes: {raw_bytes}")
-		#decoded = raw_bytes.decode(errors='replace')
-		#print(f"[DEBUG] Raw message received: {repr(decoded)}")
 
 		if bytes[0] in functionality_d.values():
 			tag = bytes[0] 
@@ -256,6 +252,8 @@ def ui(sock, port, side):
 		user_input = sys.stdin.readline().rstrip( '\n' )
 		user_input = user_input.lower()
 
+		print(f"raw: {user_input!r}")
+		print(f"expected value: {functionality_d['message']!r}")
 		if user_input == functionality_d["message"]: #message
 			#message = user_input
 			print("Enter your message:") 
@@ -267,6 +265,7 @@ def ui(sock, port, side):
 			#NEW CODE
 
 			sock.send(message.encode())
+			print(f"I am sending a message {message}")
 
 			
 
