@@ -70,11 +70,31 @@ def decode_recv(sock):
 	return grab_port
 
 def receive(sock): 
+	'''
+	# port num
 	port_recv = decode_recv(sock)
 	global socket_closed
 
+	#NEW CODE
+	username_bytes = sock.recv(1024)
+	username = username_bytes.decode().strip()
+	print(f"[INFO] {username} connected.")
+	#NEW CODE'''
+
+	#port_recv = decode_recv(sock)
+	global socket_closed
+
+	username_bytes = sock.recv(1024)
+	username = username_bytes.decode().strip()
+	print(f"[INFO] {username} connected.")
+
+	'''try:
+		port_recv = decode_recv(sock)
+	except:
+		port_recv = None'''
+ 
 	try:
-		receive_helper(sock, port_recv)
+		receive_helper(sock, None)
 	except: # exceptions, lock maybe??
 		pass 
 

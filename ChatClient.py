@@ -154,18 +154,26 @@ def receive_helper(sock, f_port):
 def client(port, address, connect_server_port): 
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
 	sock.connect((address, connect_server_port)) 
-	
-	mr_thready(sock)
 
-	try:
-		send_port = f"{port}\n"
-		sock.send(send_port.encode())
+	username = os.path.basename(os.getcwd()) # TEST
+	sock.send((username + "\n").encode())
+	
+	# send port num
+	'''try:
+		# send username
+
+		#send_port = f"{port}\n"
+		#sock.send(send_port.encode())
 	except:
 		sock.shutdown
 		sock.close()
-		return	
+		return	'''
+
+	
+	mr_thready(sock)
 	
 	wait_for_it(.5)
+
 	ui(sock, port, "client") 
 
 def server(port): # // reference echoServer.py
