@@ -1,21 +1,61 @@
+What is your name?
+Sending name to server...
 Enter an option ('m', 'f', 'x'):
-	(M)essage (send)
-	(F)ile (request)
-e(X)it
-This character was not valid. Please choose 'm', 'f', or 'x'!!!
-Enter an option ('m', 'f', 'x'):
-	(M)essage (send)
-	(F)ile (request)
-e(X)it
-Enter your message:
-Enter an option ('m', 'f', 'x'):
-	(M)essage (send)
-	(F)ile (request)
-e(X)it
-Enter your message:
-Enter an option ('m', 'f', 'x'):
-	(M)essage (send)
-	(F)ile (request)
-e(X)it
+  (M)essage (send)
+  (F)ile (request)
+ e(X)it
+client2 has joined the chat!
+client3 has joined the chat!
+Who owns the file?
 Which file do you want?
-
+testone-liners.txt
+test2
+Enter an option ('m', 'f', 'x'):
+  (M)essage (send)
+  (F)ile (request)
+ e(X)it
+in receive messages
+Error in receiveMessages: [Errno 36] File name too long: 'one-liners.txtLife is wonderful. Without it we\'d all be dead.\nDaddy, why doesn\'t this magnet pick up this floppy disk?\nGive me ambiguity or give me something else.\nI.R.S.: We\'ve got what it takes to take what you\'ve got!\nWe are born naked, wet and hungry. Then things get worse.\nMake it idiot proof and someone will make a better idiot.\nHe who laughs last thinks slowest!\nAlways remember you\'re unique, just like everyone else.\n"More hay, Trigger?" "No thanks, Roy, I\'m stuffed!"\nA flashlight is a case for holding dead batteries.\nLottery: A tax on people who are bad at math.\nError, no keyboard - press F1 to continue.\nThere\'s too much blood in my caffeine system.\nArtificial Intelligence usually beats real stupidity.\nHard work has a future payoff. Laziness pays off now.\n"Very funny, Scotty. Now beam down my clothes."\nPuritanism: The haunting fear that someone, somewhere may be happy.\nConsciousness: that annoying time between naps.\nDon\'t take life too seriously, you won\'t get out alive.\nI don\'t suffer from insan'
+ity. I enjoy every minute of it.
+Better to understand a little than to misunderstand a lot.
+The gene pool could use a little chlorine.
+When there's a will, I want to be in it.
+Okay, who put a "stop payment" on my reality check?
+We have enough youth, how about a fountain of SMART?
+Programming is an art form that fights back.
+"Daddy, what does FORMATTING DRIVE C mean?"
+All wiyht. Rho sritched mg kegtops awound?
+My mail reader can beat up your mail reader.
+Never forget: 2 + 2 = 5 for extremely large values of 2.
+Nobody has ever, ever, EVER learned all of WordPerfect.
+To define recursion, we must first define recursion.
+Good programming is 99% sweat and 1% coffee.
+Home is where you hang your @
+The E-mail of the species is more deadly than the mail.
+A journey of a thousand sites begins with a single click.
+You can't teach a new mouse old clicks.
+Great groups from little icons grow.
+Speak softly and carry a cellular phone.
+C:\ is the root of all directories.
+Don't put all your hypes in one home page.
+Pentium wise; 
+pen and paper foolish.
+The modem is the message.
+Too many clicks spoil the browse.
+The geek shall inherit the earth.
+A chat has nine lives.
+Don't byte off more than you can view.
+Fax is stranger than fiction.
+What boots up must come down.
+Windows will never cease.   (ed. oh sure...)
+In Gates we trust.    (ed.  yeah right....)
+Virtual reality is its own reward.
+Modulation in all things.
+A user and his leisure time are soon parted.
+There's no place like http://www.home.com
+Know what to expect before you connect.
+Oh, what a tangled website we weave when first we practice.
+Speed thrills.
+Give a man a fish and you feed him for a day; teach him to use the Net and he won't bother you for weeks.
+No message received, possibly disconnected.
+closing your sockets...goodbye

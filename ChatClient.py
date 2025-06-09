@@ -160,6 +160,7 @@ def receive_helper(sock, f_port):
 				print("Debug: This shouldn't be here.")
 		else:
 			print(bytes)
+	print("exited loop")
 
 '''
 		tag = bytes[0] 
@@ -196,8 +197,9 @@ def client(port, address, connect_server_port):
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
 	sock.connect((address, connect_server_port)) 
 
-	username = os.path.basename(os.getcwd()) # TEST
-	sock.send((username + "\n").encode())
+	#username = os.path.basename(os.getcwd()) # TEST
+	username = sys.stdin.readline().rstrip('\n')
+	sock.send(username.encode())
 	
 	# send port num
 	'''try:
@@ -255,16 +257,11 @@ def ui(sock, port, side):
 		print(f"raw: {user_input!r}")
 		print(f"expected value: {functionality_d['message']!r}")
 		if user_input == functionality_d["message"]: #message
-			#message = user_input
+			message = user_input
 			print("Enter your message:") 
-			usr_msg = sys.stdin.readline().rstrip( '\n' ) 
-
-			#NEW CODE
-			username = os.path.basename(os.getcwd())
-			message = f"{functionality_d['message']}{username}: {usr_msg}"
-			#NEW CODE
-
+			message += sys.stdin.readline().rstrip( '\n' ) 
 			sock.send(message.encode())
+			
 			print(f"I am sending a message {message}")
 
 			

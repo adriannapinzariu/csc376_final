@@ -86,7 +86,7 @@ def receive(sock):
 
 	username_bytes = sock.recv(1024)
 	username = username_bytes.decode().strip()
-	print(f"[INFO] {username} connected.")
+	#print(f"[INFO] {username} connected.")
 
 	'''try:
 		port_recv = decode_recv(sock)
@@ -94,7 +94,7 @@ def receive(sock):
 		port_recv = None'''
  
 	try:
-		receive_helper(sock, None)
+		receive_helper(sock)
 	except: # exceptions, lock maybe??
 		pass 
 
@@ -108,8 +108,41 @@ def receive_SHUTDOWN(socket_closed, sock):
 	if socket_closed:
 		socket_closed = True
 		os._exit(0)
+
+def receive_helper(sock):
+	global clients_empty
+	print("im in the receiver function")
+	try:
+		msg_bytes = sock.recv(1024).decode()
+		print(f"got msg: {msg_bytes}")
+		if not msg_bytes:
+			print("msg was empty")
+			return
 		
-def receive_helper(sock, f_port):
+		#you will definitely need to change this
+		if ':' in msg_bytes:
+			username, message = msg_bytes.split(':', 1)
+			chat = f"{username.strip()}: {message.strip()}".encode()
+
+			for client in list(clients_dict):
+				if client != sock:
+					try:
+						client.send(chat)
+					except: 
+						client.close()
+						del clients_dict[client]
+
+	except Exception as e:
+		print("ERROR SERVER RECEIVE CRASHED")
+	
+	finally:
+		if sock in clients_dict:
+			del clients_dict[sock]
+		sock.close()
+
+
+		
+'''def receive_helper(sock, f_port):
 	global user_input
 	global functionality_d
 
@@ -123,6 +156,7 @@ def receive_helper(sock, f_port):
 		
 		if tag == functionality_d["message"]:
 			#message main
+
 			print(data)
 
 		elif tag == functionality_d["file"]:
@@ -145,7 +179,7 @@ def receive_helper(sock, f_port):
 
 		else:
 			#this shouldn't happen
-			print("Debug: This shouldn't be here.")
+			print("Debug: This shouldn't be here.") '''
 '''
 def ui(sock, port, side): 
 	

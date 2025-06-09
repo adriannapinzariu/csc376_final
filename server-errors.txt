@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/home/adry/final/csc376_final/ChatServer.py", line 86, in <module>
+    startServer(portNum)
+  File "/home/adry/final/csc376_final/ChatServer.py", line 78, in startServer
+    clientSocket, _ = serverSocket.accept()
+                      ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/socket.py", line 295, in accept
+    fd, addr = self._accept()
+               ^^^^^^^^^^^^^^
+KeyboardInterrupt
