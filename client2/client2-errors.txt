@@ -1,6 +1,0 @@
-Traceback (most recent call last):
-  File "/home/adry/final/csc376_final/client2/../ChatClient.py", line 109, in <module>
-    startClients(portNum)
-  File "/home/adry/final/csc376_final/client2/../ChatClient.py", line 94, in startClients
-    clientSocket.shutdown(socket.SHUT_WR)
-OSError: [Errno 9] Bad file descriptor

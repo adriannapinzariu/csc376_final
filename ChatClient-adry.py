@@ -1,15 +1,17 @@
 import sys, threading, socket, os, struct, time
-
 global socket_closed
 global user_input
 global functionality_d
 
-#original code
-#add username: functionality
+#yes i did
+socket_closed = False
+user_input = ""
+functionality_d = { "message": "m", "file": "f", "exit": "x" }
+#test
 
 def wait_for_it(wait_time):
 	time.sleep(wait_time)
-	
+
 def send_file( sock, file_size, file ): # PrimFTPd_bin.py
 	print( 'File size is ' + str(file_size) )
 	file_size_bytes= struct.pack( '!L', file_size )
@@ -23,11 +25,11 @@ def send_file( sock, file_size, file ): # PrimFTPd_bin.py
 		else:
 			break
 	file.close()
-	
+
 def no_file( sock ): # PrimFTPd_bin.py
 	zero_bytes= struct.pack( '!L', 0 )
 	sock.send( zero_bytes )
-	
+
 def receive_file( sock, filename ): # PrimFTP_bin.py 
 	# receive the file lines returned from the server
 	file= open( filename, 'wb' )
@@ -38,7 +40,7 @@ def receive_file( sock, filename ): # PrimFTP_bin.py
 		else:
 			break
 	file.close()
-	
+
 def accept_file(sock, f_name):
 	# receive the file size; if empty, exit // # PrimFTP_bin.py 
 	file_size_bytes= sock.recv( 4 )
@@ -52,7 +54,7 @@ def accept_file(sock, f_name):
 		print('File does not exist or is empty')
 		
 	sock.close()
-	
+      
 def f_server(sock, port, f_name): # PrimFTPd_text.py code
 	global socket_closed
 
@@ -77,7 +79,7 @@ def f_server(sock, port, f_name): # PrimFTPd_text.py code
 	# wait for a connection and accept it // # PrimFTPd_bin.py 
 	sock, addr = serversocket.accept() 
 	accept_file(sock, f_name)
-	
+
 def decode_recv(sock):
 	# receive the port number from the server // # PrimFTPd_bin.py
 	msg_bytes = sock.recv(1024).decode()
@@ -104,22 +106,63 @@ def receive(sock):
 		receive_SHUTDOWN(socket_closed, sock)
 		sock.shutdown(socket.SHUT_RD)
 		sock.close()
-		
 
 def receive_SHUTDOWN(socket_closed, sock):
 	if socket_closed:
 		socket_closed = True
 		os._exit(0)
 		
+
 def receive_helper(sock, f_port):
 	global user_input
 	global functionality_d
 
+	#print("before the while oop")
 	while True:
+		#print("in the while loop, before raw bytes")
+
+
 		bytes = sock.recv(1024).decode()
+
 		if not bytes:
+			#print("welp it broke")
 			break
 
+
+		if bytes[0] in functionality_d.values():
+			tag = bytes[0] 
+			data = bytes[1:]
+		
+			if tag == functionality_d["message"]:
+				#message main
+				print(data)
+
+			elif tag == functionality_d["file"]:
+				#file main
+				sock_file = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+				sock_file.connect(("localhost", f_port)) 
+
+				# check whether the file exists; if it does, send back the file size
+				try:
+					file_stat= os.stat( data ) 
+					if file_stat.st_size:
+						file= open( data, 'rb' )
+						send_file( sock_file, file_stat.st_size, file )
+					else:
+						no_file( sock_file )
+				except OSError:
+					no_file( sock_file )
+
+				sock_file.close()
+
+			else:
+				#this shouldn't happen
+				print("Debug: This shouldn't be here.")
+		else:
+			print(bytes)
+	print("exited loop")
+
+'''
 		tag = bytes[0] 
 		data = bytes[1:]
 		
@@ -148,44 +191,34 @@ def receive_helper(sock, f_port):
 		else:
 			#this shouldn't happen
 			print("Debug: This shouldn't be here.")
-			
-def send(sock):
-    global socket_closed  
-    try:
-        send_helper(sock)
-    except: # exceptions, alt is use lock??
-        pass
-    
-    if not socket_closed:
-        sock.shutdown(socket.SHUT_WR)
-        socket_closed = True
-        sock.close()
-
-
-def send_helper(sock):
-    while True:
-        message = input()
-        message and sock.send(message.encode())  
-        if not message:
-            break  
-		
+		'''
 
 def client(port, address, connect_server_port): 
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
 	sock.connect((address, connect_server_port)) 
-	mr_thready(sock)
 
-	try:
-		send_port = f"{port}\n"
-		sock.send(send_port.encode())
+	#username = os.path.basename(os.getcwd()) # TEST
+	username = sys.stdin.readline().rstrip('\n')
+	sock.send(username.encode())
+	
+	# send port num
+	'''try:
+		# send username
+
+		#send_port = f"{port}\n"
+		#sock.send(send_port.encode())
 	except:
 		sock.shutdown
 		sock.close()
-		return	
+		return	'''
+
+	
+	mr_thready(sock)
 	
 	wait_for_it(.5)
+
 	ui(sock, port, "client") 
-	
+
 def server(port): # // reference echoServer.py
 	serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
 	serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) #restart
@@ -197,16 +230,17 @@ def server(port): # // reference echoServer.py
 	mr_thready(sock)
 	wait_for_it(.5)
 
-	try:
-		send_port = f"{port}\n"
-		sock.send(send_port.encode())
-	except:
-		sock.shutdown
-		sock.close()
-		return	
+	while True:
+		try:
+			send_port = f"{port}\n"
+			sock.send(send_port.encode())
+		except:
+			sock.shutdown
+			sock.close()
+			return	
 	
-	ui(sock, port, "server")
-	
+	ui(sock, port, "server") 
+
 def ui(sock, port, side): 
 	
 	global user_input
@@ -220,11 +254,17 @@ def ui(sock, port, side):
 		user_input = sys.stdin.readline().rstrip( '\n' )
 		user_input = user_input.lower()
 
+		print(f"raw: {user_input!r}")
+		print(f"expected value: {functionality_d['message']!r}")
 		if user_input == functionality_d["message"]: #message
 			message = user_input
 			print("Enter your message:") 
 			message += sys.stdin.readline().rstrip( '\n' ) 
 			sock.send(message.encode())
+			
+			print(f"I am sending a message {message}")
+
+			
 
 		elif user_input == functionality_d["file"]: #file
 			filename = user_input 
@@ -244,7 +284,7 @@ def ui(sock, port, side):
 			print ("This character was not valid. Please choose 'm', 'f', or 'x'!!!") 
 
 		user_input = ""
-		
+
 def mr_thready(sock):
 	threads = [] 
 	
@@ -258,7 +298,6 @@ def mr_thready(sock):
 
 def usage( script_name ):
     print( 'Usage: py ' + script_name + ' <port number>' ) # print portnum (arg1 + arg2)
-
 
 def main():
     # check args
@@ -304,3 +343,86 @@ def main():
 
 if __name__ == "__main__":
     main()
+		
+# anything about this line is old code --------------------
+'''
+def send(sock):
+    global socket_closed  
+    try:
+        send_helper(sock)
+    except: # exceptions, alt is use lock??
+        pass
+    
+    if not socket_closed:
+        sock.shutdown(socket.SHUT_WR)
+        socket_closed = True
+        sock.close()
+
+def send_helper(sock):
+    while True:
+        message = input()
+        message and sock.send(message.encode())  
+        if not message:
+            break  
+
+def receive(sock):
+    global socket_closed
+    try:
+        receive_helper(sock)
+    except: # exceptions, lock maybe??
+        pass 
+    
+    if not socket_closed:
+        socket_closed = True 
+        sock.close()
+
+def receive_helper(sock):
+    while True:
+        msg_bytes = sock.recv(1024) 
+        msg_bytes and print(msg_bytes.decode())
+        if not msg_bytes:
+            break  
+
+
+def client(port): # // reference echoClient.py
+        #message= sys.stdin.readline() # read a message from standard input // get message user sends
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # return (default TCP/IP socket)
+    sock.connect(('localhost', port)) # connect(), exception will terminate here
+
+    #mr.thready the helper function!
+    mr_thready(sock)
+    
+
+
+def mr_thready(sock):
+    threads = [] 
+
+    sender_thread = threading.Thread(target=send, args=(sock,))
+    receiver_thread = threading.Thread(target=receive, args=(sock,))
+
+    threads.append(sender_thread)
+    threads.append(receiver_thread)
+
+    sender_thread.start()
+    receiver_thread.start()
+
+    return threads
+
+
+def usage( script_name ):
+    print( 'Usage: py ' + script_name + ' <port number>' ) # print portnum (arg1 + arg2)
+
+
+def main():
+    argc = len(sys.argv)
+    if argc != 2:
+        usage(sys.argv[0])
+        sys.exit()
+
+    port =  int(sys.argv[1])
+
+    #client
+    client(port)
+
+if __name__ == "__main__":
+    main()'''
