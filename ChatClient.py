@@ -1,6 +1,5 @@
-#DONE
+# Final Version of ChatClient
 import sys, threading, socket, os, struct, time
-
 global socket_closed
 global user_input
 global functionality_d
@@ -54,7 +53,7 @@ def accept_file(sock, f_name):
 		print('File does not exist or is empty')
 		
 	sock.close()
-      
+
 def f_server(sock, port, f_name): # PrimFTPd_text.py code
 	global socket_closed
 
@@ -107,11 +106,11 @@ def receive(sock):
 		sock.shutdown(socket.SHUT_RD)
 		sock.close()
 
+
 def receive_SHUTDOWN(socket_closed, sock):
 	if socket_closed:
 		socket_closed = True
 		os._exit(0)
-	
 
 def receive_helper(sock, f_port):
 	global user_input
@@ -121,7 +120,6 @@ def receive_helper(sock, f_port):
 		bytes = sock.recv(1024).decode()
 		if not bytes:
 			break
-
 
 		tag = bytes[0] 
 		data = bytes[1:]
@@ -142,9 +140,9 @@ def receive_helper(sock, f_port):
 					file= open( data, 'rb' )
 					send_file( sock_file, file_stat.st_size, file )
 				else:
-						no_file( sock_file )
-			except OSError:
 					no_file( sock_file )
+			except OSError:
+				no_file( sock_file )
 
 			sock_file.close()
 
@@ -152,16 +150,14 @@ def receive_helper(sock, f_port):
 			#this shouldn't happen
 			print("Debug: This shouldn't be here.")
 
-
-
 def client(port, address, connect_server_port): 
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
 	sock.connect((address, connect_server_port)) 
 	mr_thready(sock)
 
 	try:
-		send_user = sys.stdin.readline().rstrip('\n') 
-		sock.send(send_user.encode())
+		send_usr = sys.stdin.readline().rstrip( '\n' ) 
+		sock.send(send_usr.encode())
 	except:
 		sock.shutdown
 		sock.close()
@@ -180,7 +176,6 @@ def server(port): # // reference echoServer.py
 
 	mr_thready(sock)
 	wait_for_it(.5)
-
 
 	try:
 		send_port = f"{port}\n"
@@ -209,7 +204,7 @@ def ui(sock, port, side):
 			message = user_input
 			print("Enter your message:") 
 			message += sys.stdin.readline().rstrip( '\n' ) 
-			sock.send(message.encode())		
+			sock.send(message.encode())
 
 		elif user_input == functionality_d["file"]: #file
 			filename = user_input 
@@ -288,4 +283,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-		
