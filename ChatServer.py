@@ -3,13 +3,11 @@ global socket_closed
 global user_input
 global functionality_d
 
-#did i fix up autosave
 socket_closed = False
 user_input = ""
 functionality_d = { "message": "m", "file": "f", "exit": "x" }
 clients_dict = {}
 clients_empty = False
-#test
 
 def wait_for_it(wait_time):
 	time.sleep(wait_time)
@@ -70,23 +68,13 @@ def decode_recv(sock):
 	return grab_port
 
 def receive(sock): 
-	'''
-	# port num
-	port_recv = decode_recv(sock)
-	global socket_closed
-
-	#NEW CODE
-	username_bytes = sock.recv(1024)
-	username = username_bytes.decode().strip()
-	print(f"[INFO] {username} connected.")
-	#NEW CODE'''
 
 	#port_recv = decode_recv(sock)
 	global socket_closed
 
 	username_bytes = sock.recv(1024)
 	username = username_bytes.decode().strip()
-	print(f"[INFO] {username} connected.")
+
 
 	'''try:
 		port_recv = decode_recv(sock)
@@ -146,45 +134,7 @@ def receive_helper(sock, f_port):
 		else:
 			#this shouldn't happen
 			print("Debug: This shouldn't be here.")
-'''
-def ui(sock, port, side): 
-	
-	global user_input
 
-	while True:
-		print("Enter an option ('m', 'f', 'x'):")
-		print("\t(M)essage (send)")
-		print("\t(F)ile (request)")
-		print("e(X)it")
-
-		user_input = sys.stdin.readline().rstrip( '\n' )
-		user_input = user_input.lower()
-
-		if user_input == functionality_d["message"]: #message
-			message = user_input
-			print("Enter your message:") 
-			message += sys.stdin.readline().rstrip( '\n' ) 
-			sock.send(message.encode())
-
-		elif user_input == functionality_d["file"]: #file
-			filename = user_input 
-			print(f"Which file do you want?\n")
-			filename += sys.stdin.readline().rstrip( '\n' ) 
-			f_server(sock, port, filename) 
-
-		elif user_input == functionality_d["exit"]: #exit
-			print("closing your sockets...goodbye")
-			sock.shutdown(socket.SHUT_WR)
-			sock.close()
-			if not socket_closed:
-				socket_closed = True
-			sys.exit()
-
-		else: 
-			print ("This character was not valid. Please choose 'm', 'f', or 'x'!!!") 
-
-		user_input = ""
-'''
 def f_server(sock, port, f_name): # PrimFTPd_text.py code
 	global socket_closed
 

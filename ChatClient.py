@@ -1,13 +1,12 @@
 import sys, threading, socket, os, struct, time
+
 global socket_closed
 global user_input
 global functionality_d
 
-#yes i did
 socket_closed = False
 user_input = ""
 functionality_d = { "message": "m", "file": "f", "exit": "x" }
-#test
 
 def wait_for_it(wait_time):
 	time.sleep(wait_time)
@@ -117,17 +116,10 @@ def receive_helper(sock, f_port):
 	global user_input
 	global functionality_d
 
-	#print("before the while oop")
 	while True:
-		#print("in the while loop, before raw bytes")
-
-
 		bytes = sock.recv(1024).decode()
-
 		if not bytes:
-			#print("welp it broke")
 			break
-
 
 		if bytes[0] in functionality_d.values():
 			tag = bytes[0] 
@@ -160,37 +152,6 @@ def receive_helper(sock, f_port):
 				print("Debug: This shouldn't be here.")
 		else:
 			print(bytes)
-
-'''
-		tag = bytes[0] 
-		data = bytes[1:]
-		
-		if tag == functionality_d["message"]:
-			#message main
-			print(data)
-
-		elif tag == functionality_d["file"]:
-			#file main
-			sock_file = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
-			sock_file.connect(("localhost", f_port)) 
-
-			# check whether the file exists; if it does, send back the file size
-			try:
-				file_stat= os.stat( data ) 
-				if file_stat.st_size:
-					file= open( data, 'rb' )
-					send_file( sock_file, file_stat.st_size, file )
-				else:
-					no_file( sock_file )
-			except OSError:
-				no_file( sock_file )
-
-			sock_file.close()
-
-		else:
-			#this shouldn't happen
-			print("Debug: This shouldn't be here.")
-		'''
 
 def client(port, address, connect_server_port): 
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
@@ -252,8 +213,6 @@ def ui(sock, port, side):
 		user_input = sys.stdin.readline().rstrip( '\n' )
 		user_input = user_input.lower()
 
-		print(f"raw: {user_input!r}")
-		print(f"expected value: {functionality_d['message']!r}")
 		if user_input == functionality_d["message"]: #message
 			message = user_input
 			print("Enter your message:") 
