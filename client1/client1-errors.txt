@@ -1,15 +1,15 @@
 Traceback (most recent call last):
-  File "/home/adry/final/csc376_final/client1/../ChatClient.py", line 348, in <module>
+  File "/home/adry/final/csc376_final/client1/../ChatClient.py", line 291, in <module>
     main()
-  File "/home/adry/final/csc376_final/client1/../ChatClient.py", line 342, in main
+  File "/home/adry/final/csc376_final/client1/../ChatClient.py", line 285, in main
     client(port, address, connect_server_port)
-  File "/home/adry/final/csc376_final/client1/../ChatClient.py", line 218, in client
+  File "/home/adry/final/csc376_final/client1/../ChatClient.py", line 172, in client
     ui(sock, port, "client") 
     ^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/adry/final/csc376_final/client1/../ChatClient.py", line 276, in ui
+  File "/home/adry/final/csc376_final/client1/../ChatClient.py", line 219, in ui
     f_server(sock, port, filename) 
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/adry/final/csc376_final/client1/../ChatClient.py", line 67, in f_server
+  File "/home/adry/final/csc376_final/client1/../ChatClient.py", line 66, in f_server
     serversocket.bind(('localhost', port)) 
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 OSError: [Errno 98] Address already in use

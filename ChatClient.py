@@ -121,61 +121,52 @@ def receive_helper(sock, f_port):
 		if not bytes:
 			break
 
-		if bytes[0] in ('m', 'f', 'x'):
-			tag = bytes[0] 
-			data = bytes[1:]
+
+		tag = bytes[0] 
+		data = bytes[1:]
 		
-			if tag == functionality_d["message"]:
-				#message main
-				print(data)
+		if tag == functionality_d["message"]:
+			#message main
+			print(data)
 
-			elif tag == functionality_d["file"]:
-				#file main
-				sock_file = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
-				sock_file.connect(("localhost", f_port)) 
+		elif tag == functionality_d["file"]:
+			#file main
+			sock_file = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+			sock_file.connect(("localhost", f_port)) 
 
-				# check whether the file exists; if it does, send back the file size
-				try:
-					file_stat= os.stat( data ) 
-					if file_stat.st_size:
-						file= open( data, 'rb' )
-						send_file( sock_file, file_stat.st_size, file )
-					else:
+			# check whether the file exists; if it does, send back the file size
+			try:
+				file_stat= os.stat( data ) 
+				if file_stat.st_size:
+					file= open( data, 'rb' )
+					send_file( sock_file, file_stat.st_size, file )
+				else:
 						no_file( sock_file )
-				except OSError:
+			except OSError:
 					no_file( sock_file )
 
-				sock_file.close()
+			sock_file.close()
 
-			else:
-				#this shouldn't happen
-				print("Debug: This shouldn't be here.")
-		else: # new code for if statement HERE
-			print(bytes)
+		else:
+			#this shouldn't happen
+			print("Debug: This shouldn't be here.")
 
-# 2 new lines
+
+
 def client(port, address, connect_server_port): 
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
 	sock.connect((address, connect_server_port)) 
+	mr_thready(sock)
 
-	 
-	username = sys.stdin.readline().rstrip('\n') # NEW CODE HERE
-	sock.send(username.encode()) # NEW CODE HERE
-	
-	# send port num
-	'''try:
-		#send_port = f"{port}\n"
-		#sock.send(send_port.encode())
+	try:
+		send_user = sys.stdin.readline().rstrip('\n') 
+		sock.send(send_user.encode())
 	except:
 		sock.shutdown
 		sock.close()
-		return	'''
-
-	
-	mr_thready(sock)
+		return	
 	
 	wait_for_it(.5)
-
 	ui(sock, port, "client") 
 
 def server(port): # // reference echoServer.py
@@ -189,14 +180,14 @@ def server(port): # // reference echoServer.py
 	mr_thready(sock)
 	wait_for_it(.5)
 
-	while True: #CHANGE HERE
-		try:
-			send_port = f"{port}\n"
-			sock.send(send_port.encode())
-		except:
-			sock.shutdown
-			sock.close()
-			return	
+
+	try:
+		send_port = f"{port}\n"
+		sock.send(send_port.encode())
+	except:
+		sock.shutdown
+		sock.close()
+		return	
 	
 	ui(sock, port, "server") 
 
