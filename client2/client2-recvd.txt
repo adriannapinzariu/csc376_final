@@ -12,5 +12,3 @@ Enter an option ('m', 'f', 'x'):
 	(M)essage (send)
 	(F)ile (request)
 e(X)it
-Which file do you want?
-
