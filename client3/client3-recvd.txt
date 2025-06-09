@@ -1,6 +1,4 @@
-What is your name?
-Sending name to server...
 Enter an option ('m', 'f', 'x'):
-  (M)essage (send)
-  (F)ile (request)
- e(X)it
+	(M)essage (send)
+	(F)ile (request)
+e(X)it
