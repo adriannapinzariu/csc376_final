@@ -6,6 +6,7 @@ global functionality_d
 socket_closed = False
 user_input = ""
 functionality_d = { "message": "m", "file": "f", "exit": "x" }
+
 clients_dict = {}
 clients_empty = False
 
@@ -54,6 +55,32 @@ def accept_file(sock, f_name):
 		print('File does not exist or is empty')
 		
 	sock.close()
+
+def f_server(sock, port, f_name): # PrimFTPd_text.py code
+	global socket_closed
+
+	if socket_closed:
+		return
+
+	# create a listening object // # PrimFTPd_text.py code
+	serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+	serversocket.bind(('localhost', port)) 
+	serversocket.listen(5)
+
+		# 1. send
+		# 2. accept
+		# 3. filesize
+
+	if f_name.strip():
+		sock.send(f_name.encode()) # PrimFTP_text.py code
+	else:
+		return
+	
+	# wait for a connection and accept it // # PrimFTPd_bin.py 
+	sock, addr = serversocket.accept() 
+	accept_file(sock, f_name)
+
 	
 def decode_recv(sock):
 	# receive the port number from the server // # PrimFTPd_bin.py
@@ -68,21 +95,13 @@ def decode_recv(sock):
 	return grab_port
 
 def receive(sock): 
-
 	#port_recv = decode_recv(sock)
 	global socket_closed
 
-	username_bytes = sock.recv(1024)
-	username = username_bytes.decode().strip()
-
-
-	'''try:
-		port_recv = decode_recv(sock)
-	except:
-		port_recv = None'''
+	user_bytes = sock.recv(1024)
  
 	try:
-		receive_helper(sock, None)
+		receive_helper(sock, user_bytes)
 	except: # exceptions, lock maybe??
 		pass 
 
@@ -135,60 +154,12 @@ def receive_helper(sock, f_port):
 			#this shouldn't happen
 			print("Debug: This shouldn't be here.")
 
-def f_server(sock, port, f_name): # PrimFTPd_text.py code
-	global socket_closed
-
-	if socket_closed:
-		return
-
-	# create a listening object // # PrimFTPd_text.py code
-	serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-	serversocket.bind(('localhost', port)) 
-	serversocket.listen(5)
-
-		# 1. send
-		# 2. accept
-		# 3. filesize
-
-	if f_name.strip():
-		sock.send(f_name.encode()) # PrimFTP_text.py code
-	else:
-		return
-	
-	# wait for a connection and accept it // # PrimFTPd_bin.py 
-	sock, addr = serversocket.accept() 
-	accept_file(sock, f_name)
-
-def decode_recv(sock):
-	# receive the port number from the server // # PrimFTPd_bin.py
-	msg_bytes = sock.recv(1024).decode()
-	split_bytes = msg_bytes.split("\n")
-
-	if split_bytes:
-		grab_port = int(split_bytes[0])
-	else:
-		grab_port = 0
-
-	return grab_port
-
-def mr_thready(sock):
-	threads = [] 
-	
-	receiver_thread = threading.Thread(target=receive, args=(sock,))
-
-	threads.append(receiver_thread)
-
-	receiver_thread.start()
-
-	return threads
 
 def server(port): # // reference echoServer.py
 	serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
 	serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) #restart
 	serversocket.bind(('', port)) # binds to any available interface
 	serversocket.listen(5) # accept any connection requests (client, address aka localhost)
-	
 	while True:
 		sock, addr = serversocket.accept() # we have client, server no longer needed
 		#serversocket.close() 
@@ -204,7 +175,18 @@ def server(port): # // reference echoServer.py
 			sock.close()
 			return	
 	
-	#ui(sock, port, "server") 
+		#ui(sock, port, "server") 
+
+def mr_thready(sock):
+	threads = [] 
+	
+	receiver_thread = threading.Thread(target=receive, args=(sock,))
+
+	threads.append(receiver_thread)
+
+	receiver_thread.start()
+
+	return threads
 	
 def usage( script_name ):
     print( 'Usage: py ' + script_name + ' <port number>' ) # print portnum (arg1 + arg2)
