@@ -1,0 +1,11 @@
+Enter an option ('m', 'f', 'x'):
+	(M)essage (send)
+	(F)ile (request)
+e(X)it
+raw: 'client3'
+expected value: 'm'
+This character was not valid. Please choose 'm', 'f', or 'x'!!!
+Enter an option ('m', 'f', 'x'):
+	(M)essage (send)
+	(F)ile (request)
+e(X)it
