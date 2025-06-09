@@ -10,97 +10,182 @@ functionality_d = { "message": "m", "file": "f", "exit": "x" }
 clients_dict = {}
 clients_empty = False
 
-import socket
-import threading
-import sys
+def wait_for_it(wait_time):
+	time.sleep(wait_time)
 
-clients_dict = {}
-socket_closed = False 
-clients_empty = False
 
-def receive(sock):
-    global socket_closed
-    global clients_empty
+def receive(sock): 
+	port_recv = decode_recv(sock)
+	global socket_closed
 
-    try:
-        receive_helper(sock)
-    except:
-        pass
+	try:
+		receive_helper(sock, port_recv)
+	except: # exceptions, lock maybe??
+		pass 
 
-    if sock in clients_dict:
-        del clients_dict[sock]
-        clients_empty = (len(clients_dict) == 0) 
-        if clients_empty:
-            sock.shutdown(socket.SHUT_WR)
-            socket_closed = True
-        
-    sock.close() 
+	if not socket_closed:
+		socket_closed = True 
+		receive_SHUTDOWN(socket_closed, sock)
+		sock.shutdown(socket.SHUT_RD)
+		sock.close()
 
-def receive_helper(sock):
-    global clients_empty
+def receive_SHUTDOWN(socket_closed, sock):
+	if socket_closed:
+		socket_closed = True
+		os._exit(0)
+		
+def receive_helper(sock, f_port):
+	global user_input
+	global functionality_d
 
-    #firstname
-    msg = []
-    msg.append(sock.recv(1024).decode())
-    first_name = msg[0]
-    clients_dict[sock] = first_name
-    clients_empty = False
+	while True:
+		bytes = sock.recv(1024).decode()
+		if not bytes:
+			break
 
-    while True:
-        bytes = sock.recv(1024).decode()
-        if not bytes:
-            break 
+		tag = bytes[0] 
+		data = bytes[1:]
+		
+		if tag == functionality_d["message"]:
+			#message main
+			print(data)
 
-        #msg
-        msg.append(bytes)
-        msg_bytes = bytes
+		elif tag == functionality_d["file"]:
+			#file main
+			sock_file = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+			sock_file.connect(("localhost", f_port)) 
 
-        chat = (first_name + ": " + msg_bytes + '\n')
-        chat = chat.encode()
+			# check whether the file exists; if it does, send back the file size
+			try:
+				file_stat= os.stat( data ) 
+				if file_stat.st_size:
+					file= open( data, 'rb' )
+					send_file( sock_file, file_stat.st_size, file )
+				else:
+					no_file( sock_file )
+			except OSError:
+				no_file( sock_file )
 
-        #send to client(s)
-        for key in clients_dict:
-            if key != sock:
-                key.send(chat)  
+			sock_file.close()
 
-def server(port):
-    serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) #restart
-    serversocket.bind(('', port)) # binds to any available interface
-    serversocket.listen(5) 
-  
-    #serversocket.close() # we have client, server no longer needed
+		else:
+			#this shouldn't happen
+			print("Debug: This shouldn't be here.")
 
-    while True:
-        sock, addr = serversocket.accept()
-        mr_thready(sock)
+def server(port): # // reference echoServer.py
+	serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+	serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) #restart
+	serversocket.bind(('', port)) # binds to any available interface
+	serversocket.listen(5) # accept any connection requests (client, address aka localhost)
+	sock, addr = serversocket.accept() # we have client, server no longer needed
+	serversocket.close() 
+
+	mr_thready(sock)
+	wait_for_it(.5)
+
+	try:
+		send_port = f"{port}\n"
+		sock.send(send_port.encode())
+	except:
+		sock.shutdown
+		sock.close()
+		return	
+	
+	ui(sock, port, "server") 
+
+def ui(sock, port, side): 
+	
+	global user_input
+
+	while True:
+		print("Enter an option ('m', 'f', 'x'):")
+		print("\t(M)essage (send)")
+		print("\t(F)ile (request)")
+		print("e(X)it")
+
+		user_input = sys.stdin.readline().rstrip( '\n' )
+		user_input = user_input.lower()
+
+		if user_input == functionality_d["message"]: #message
+			message = user_input
+			print("Enter your message:") 
+			message += sys.stdin.readline().rstrip( '\n' ) 
+			sock.send(message.encode())
+
+		elif user_input == functionality_d["file"]: #file
+			filename = user_input 
+			print(f"Which file do you want?\n")
+			filename += sys.stdin.readline().rstrip( '\n' ) 
+			f_server(sock, port, filename) 
+
+		elif user_input == functionality_d["exit"]: #exit
+			print("closing your sockets...goodbye")
+			sock.shutdown(socket.SHUT_WR)
+			sock.close()
+			if not socket_closed:
+				socket_closed = True
+			sys.exit()
+
+		else: 
+			print ("This character was not valid. Please choose 'm', 'f', or 'x'!!!") 
+
+		user_input = ""
 
 def mr_thready(sock):
-    threads = [] 
+	threads = [] 
+	
+	receiver_thread = threading.Thread(target=receive, args=(sock,))
 
-    receiver_thread = threading.Thread(target=receive, args=(sock,))
+	threads.append(receiver_thread)
 
-    threads.append(receiver_thread)
-    
-    receiver_thread.start()
+	receiver_thread.start()
 
-    return threads
+	return threads
 
 def usage( script_name ):
     print( 'Usage: py ' + script_name + ' <port number>' ) # print portnum (arg1 + arg2)
 
-
 def main():
-    argc = len(sys.argv)
-    if argc != 2:
+    # check args
+    argc= len( sys.argv ) # check len of args, only possibilities are 3 for server, 5 or 7 for client
+    choice = 5 # 0 for server, 1 for client
+
+    if not (argc == 3 or argc == 5 or argc == 7): 
         usage(sys.argv[0])
-        sys.exit()
+        sys.exit(1)
 
-    port = int(sys.argv[1])
+    port = int(sys.argv[2])
 
-    #server
-    server(port)
+    #1.
+    # run as client or server based on CLI args
+    # -l for server
+    #if (argc == 3 and sys.argv[1] == '-l'):
+    if (argc == 3):
+        choice = 0
+
+    #client
+    # -s for address of server and -p for port number
+    # if no -s, the program connects to local host
+    elif (argc == 5 or argc == 7):
+        #client
+        choice = 1
+        if (argc == 5 and sys.argv[3] == '-p'):
+            #localhost
+            address = 'localhost'
+            connect_server_port = int(sys.argv[4])
+        elif (argc == 7 and sys.argv[3] == '-s' and sys.argv[5] == '-p'):
+            address = sys.argv[4]
+            connect_server_port = int(sys.argv[6])
+
+    if (choice == 0):
+        #server
+        server(port)
+    elif (choice == 1):
+        #client
+        client(port, address, connect_server_port)
+    else: # something went wrong
+        sys.exit(1)
+
 
 if __name__ == "__main__":
     main()
-

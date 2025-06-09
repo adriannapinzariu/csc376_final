@@ -3,32 +3,25 @@ Traceback (most recent call last):
     main()
   File "/home/adry/final/csc376_final/client3/../ChatClient.py", line 300, in main
     client(port, address, connect_server_port)
-  File "/home/adry/final/csc376_final/client3/../ChatClient.py", line 187, in client
-    ui(sock, port, "client") 
-    ^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/adry/final/csc376_final/client3/../ChatClient.py", line 223, in ui
-    if user_input == functionality_d["message"]: #message
-                     ^^^^^^^^^^^^^^^
-NameError: name 'functionality_d' is not defined
-Exception ignored in: <module 'threading' from '/usr/lib/python3.12/threading.py'>
-Traceback (most recent call last):
-  File "/usr/lib/python3.12/threading.py", line 1622, in _shutdown
-    lock.acquire()
-KeyboardInterrupt: 
+  File "/home/adry/final/csc376_final/client3/../ChatClient.py", line 175, in client
+    sock.connect((address, connect_server_port)) 
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ConnectionRefusedError: [Errno 111] Connection refused
 Traceback (most recent call last):
   File "/home/adry/final/csc376_final/client3/../ChatClient.py", line 306, in <module>
     main()
   File "/home/adry/final/csc376_final/client3/../ChatClient.py", line 300, in main
     client(port, address, connect_server_port)
-  File "/home/adry/final/csc376_final/client3/../ChatClient.py", line 187, in client
-    ui(sock, port, "client") 
-    ^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/adry/final/csc376_final/client3/../ChatClient.py", line 223, in ui
-    if user_input == functionality_d["message"]: #message
-                     ^^^^^^^^^^^^^^^
-NameError: name 'functionality_d' is not defined
-Exception ignored in: <module 'threading' from '/usr/lib/python3.12/threading.py'>
+  File "/home/adry/final/csc376_final/client3/../ChatClient.py", line 175, in client
+    sock.connect((address, connect_server_port)) 
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ConnectionRefusedError: [Errno 111] Connection refused
 Traceback (most recent call last):
-  File "/usr/lib/python3.12/threading.py", line 1622, in _shutdown
-    lock.acquire()
-KeyboardInterrupt: 
+  File "/home/adry/final/csc376_final/client3/../ChatClient.py", line 306, in <module>
+    main()
+  File "/home/adry/final/csc376_final/client3/../ChatClient.py", line 300, in main
+    client(port, address, connect_server_port)
+  File "/home/adry/final/csc376_final/client3/../ChatClient.py", line 175, in client
+    sock.connect((address, connect_server_port)) 
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ConnectionRefusedError: [Errno 111] Connection refused
