@@ -110,7 +110,7 @@ def receive_SHUTDOWN(socket_closed, sock):
 	if socket_closed:
 		socket_closed = True
 		os._exit(0)
-		
+	
 
 def receive_helper(sock, f_port):
 	global user_input
@@ -121,7 +121,7 @@ def receive_helper(sock, f_port):
 		if not bytes:
 			break
 
-		if bytes[0] in functionality_d.values():
+		if bytes[0] in ('m', 'f', 'x'):
 			tag = bytes[0] 
 			data = bytes[1:]
 		
@@ -150,20 +150,20 @@ def receive_helper(sock, f_port):
 			else:
 				#this shouldn't happen
 				print("Debug: This shouldn't be here.")
-		else:
+		else: # new code for if statement HERE
 			print(bytes)
 
+# 2 new lines
 def client(port, address, connect_server_port): 
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
 	sock.connect((address, connect_server_port)) 
-	
-	username = sys.stdin.readline().rstrip('\n')
-	sock.send(username.encode())
+
+	 
+	username = sys.stdin.readline().rstrip('\n') # NEW CODE HERE
+	sock.send(username.encode()) # NEW CODE HERE
 	
 	# send port num
 	'''try:
-		# send username
-
 		#send_port = f"{port}\n"
 		#sock.send(send_port.encode())
 	except:
@@ -189,7 +189,7 @@ def server(port): # // reference echoServer.py
 	mr_thready(sock)
 	wait_for_it(.5)
 
-	while True:
+	while True: #CHANGE HERE
 		try:
 			send_port = f"{port}\n"
 			sock.send(send_port.encode())
